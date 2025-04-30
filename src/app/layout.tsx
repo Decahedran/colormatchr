@@ -12,10 +12,11 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'ColorMatchr',
   description: 'Extract dominant color palettes from any image',
 }
+
 
 
 export default function RootLayout({
