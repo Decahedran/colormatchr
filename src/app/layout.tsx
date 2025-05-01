@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
-
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -18,9 +15,6 @@ export const metadata = {
   title: 'ColorMatchr',
   description: 'Extract dominant color palettes from any image',
 }
-
-
-
 
 export default function RootLayout({
   children,
