@@ -142,7 +142,7 @@ export default function Home() {
   const cmykStr = `cmyk(${(c * 100).toFixed(0)}%, ${(m * 100).toFixed(0)}%, ${(y * 100).toFixed(0)}%, ${(k * 100).toFixed(0)}%)`
 
   return (
-    <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'left' }}>
       <div
         style={{
           width: '3.5rem',
@@ -153,7 +153,7 @@ export default function Home() {
         }}
       />
       {hasPaid && (
-        <div style={{ fontSize: '0.75rem', marginTop: '0.5rem', textAlign: 'center' }}>
+        <div style={{ fontSize: '0.75rem', marginTop: '0.5rem', textAlign: 'left' }}>
           <button
             onClick={() => navigator.clipboard.writeText(hex)}
             style={{
