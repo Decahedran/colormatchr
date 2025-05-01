@@ -37,7 +37,7 @@ export default function Home() {
   
 
   const handleBuyPro = () => {
-    window.open('https://derekmcauley.gumroad.com/l/ColorMatchrPro', '_blank')
+    window.open('https://orchidsolutions.gumroad.com/l/ColorMatchrPro', '_blank')
     // Uncomment below line for local testing
     // setHasPaid(true)
   }
