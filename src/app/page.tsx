@@ -57,12 +57,20 @@ export default function Home() {
 
   const handleDownload = async () => {
     const palette = document.getElementById('palette-area')
-    if (palette) {
+    if (!palette) {
+      alert('Could not find the palette to download.')
+      return
+    }
+
+    try {
       const canvas = await html2canvas(palette)
       const link = document.createElement('a')
       link.download = 'palette.png'
-      link.href = canvas.toDataURL()
+      link.href = canvas.toDataURL('image/png')
       link.click()
+    } catch (error) {
+      console.error('❌ Error generating PNG:', error)
+      alert('There was an error saving the image. Try again.')
     }
   }
 
