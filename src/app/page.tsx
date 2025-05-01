@@ -61,9 +61,16 @@ export default function Home() {
       alert('Could not find the palette to download.')
       return
     }
-
+  
     try {
-      const canvas = await html2canvas(palette)
+      const canvas = await html2canvas(palette, {
+        backgroundColor: '#ffffff',
+        useCORS: true,
+        ignoreElements: (el) =>
+          getComputedStyle(el).color.includes('oklch') ||
+          getComputedStyle(el).backgroundColor.includes('oklch')
+      })
+  
       const link = document.createElement('a')
       link.download = 'palette.png'
       link.href = canvas.toDataURL('image/png')
@@ -73,6 +80,7 @@ export default function Home() {
       alert('There was an error saving the image. Try again.')
     }
   }
+  
 
   return (
     <main className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-6">
