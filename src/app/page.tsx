@@ -2,13 +2,24 @@
 
 import ColorThief from 'colorthief'
 import html2canvas from 'html2canvas'
-import { useRef, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
+import { useEffect, useRef, useState } from 'react'
 
 export default function Home() {
   const [imageUrl, setImageUrl] = useState<string | null>(null)
   const [colors, setColors] = useState<number[][]>([])
   const [hasPaid, setHasPaid] = useState(false)
   const imgRef = useRef<HTMLImageElement | null>(null)
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    if (searchParams.get('unlocked') === 'true') {
+      setHasPaid(true)
+      localStorage.setItem('colormatchr-pro', 'true')
+    } else if (localStorage.getItem('colormatchr-pro') === 'true') {
+      setHasPaid(true)
+    }
+  }, [])
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -34,12 +45,9 @@ export default function Home() {
       console.warn('⏳ Image not ready yet')
     }
   }
-  
 
   const handleBuyPro = () => {
-    window.open('https://orchidsolutions.gumroad.com/l/ColorMatchrPro?wanted=true', '_blank')
-    // Uncomment below line for local testing
-    // setHasPaid(true)
+    window.open('https://orchidsolutions.gumroad.com/l/ColorMatchrPro', '_blank')
   }
 
   const handleDownload = async () => {
@@ -77,49 +85,60 @@ export default function Home() {
             onLoad={extractColors}
             className="max-w-xs rounded shadow mb-4"
           />
-          
+
           {colors.length === 0 && (
             <p className="text-sm text-red-500">⚠️ No colors extracted yet</p>
           )}
 
-          <div id="palette-area" className="flex flex-wrap gap-3 justify-center mt-4">
-            {colors.map((color, i) => (
-              <div
-                key={i}
-                className="w-14 h-14 rounded-lg shadow-md"
-                style={{ backgroundColor: `rgb(${color.join(',')})` }}
-              />
-            ))}
+          <div id="palette-area" className="flex flex-wrap gap-4 justify-center mt-4">
+            {colors.map((color, i) => {
+              const hex = `#${color.map(c => c.toString(16).padStart(2, '0')).join('')}`
+              return (
+                <div key={i} className="flex flex-col items-center space-y-1">
+                  <div
+                    className="w-14 h-14 rounded-lg shadow-md"
+                    style={{ backgroundColor: `rgb(${color.join(',')})` }}
+                  />
+                  {hasPaid && (
+                    <button
+                      onClick={() => navigator.clipboard.writeText(hex)}
+                      className="text-xs text-gray-600 hover:text-black"
+                    >
+                      {hex} 📋
+                    </button>
+                  )}
+                </div>
+              )
+            })}
           </div>
 
           <div className="mt-4 text-center">
-  <p className="text-sm text-gray-600 mb-2">
-    {colors.length === 0
-      ? '🎨 Upload an image to extract colors and unlock Pro features'
-      : hasPaid
-      ? '✅ Pro unlocked – download your palette!'
-      : '🔒 Download requires Pro'}
-  </p>
+            <p className="text-sm text-gray-600 mb-2">
+              {colors.length === 0
+                ? '🎨 Upload an image to extract colors and unlock Pro features'
+                : hasPaid
+                ? '✅ Pro unlocked – download your palette and copy HEX codes'
+                : '🔒 Download and HEX codes require Pro'}
+            </p>
 
-  {colors.length > 0 ? (
-    hasPaid ? (
-      <button
-        onClick={handleDownload}
-        className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-      >
-        📥 Download Palette
-      </button>
-    ) : (
-      <button
-        onClick={handleBuyPro}
-        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-      >
-        Buy ColorMatchr Pro
-      </button>
-    )
-  ) : null}
-</div>
-
+            {colors.length > 0 ? (
+              hasPaid ? (
+                <button
+                  onClick={handleDownload}
+                  className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                >
+                  📥 Download Palette
+                </button>
+              ) : (
+                <button
+                  onClick={handleBuyPro}
+                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                >
+                  Buy ColorMatchr Pro
+                </button>
+              )
+            ) : null}
+          </div>
 
           <p className="text-sm mt-2 text-gray-600">Extracted Palette</p>
         </>
