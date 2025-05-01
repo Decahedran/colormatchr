@@ -61,13 +61,13 @@ export default function Home() {
       alert('Could not find the palette to download.')
       return
     }
-  
+
     try {
       const canvas = await html2canvas(target, {
         backgroundColor: '#ffffff',
         useCORS: true
       })
-  
+
       const link = document.createElement('a')
       link.download = 'palette.png'
       link.href = canvas.toDataURL('image/png')
@@ -77,8 +77,6 @@ export default function Home() {
       alert('There was an error saving the image. Try again.')
     }
   }
-  
-  
 
   return (
     <main className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-6">
@@ -113,28 +111,51 @@ export default function Home() {
             <p className="text-sm text-red-500">⚠️ No colors extracted yet</p>
           )}
 
-<div className="mt-4 flex justify-center">
-  <div id="capture-target" className="flex flex-wrap gap-4 p-4 bg-white rounded shadow">
-            {colors.map((color, i) => {
-              const hex = `#${color.map(c => c.toString(16).padStart(2, '0')).join('')}`
-              return (
-                <div key={i} className="flex flex-col items-center space-y-1">
-                  <div
-                    className="w-14 h-14 rounded-lg shadow-md"
-                    style={{ backgroundColor: `rgb(${color.join(',')})` }}
-                  />
-                  {hasPaid && (
-                    <button
-                      onClick={() => navigator.clipboard.writeText(hex)}
-                      className="text-xs text-gray-600 hover:text-black"
-                    >
-                      {hex} 📋
-                    </button>
-                  )}
-                </div>
-              )
-            })}
-          </div>
+          <div className="mt-4 flex justify-center">
+            <div
+              id="capture-target"
+              style={{
+                backgroundColor: '#ffffff',
+                padding: '1rem',
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: '1rem',
+                borderRadius: '0.5rem',
+                boxShadow: '0 1px 4px rgba(0,0,0,0.1)'
+              }}
+            >
+              {colors.map((color, i) => {
+                const hex = `#${color.map(c => c.toString(16).padStart(2, '0')).join('')}`
+                return (
+                  <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <div
+                      style={{
+                        width: '3.5rem',
+                        height: '3.5rem',
+                        borderRadius: '0.5rem',
+                        backgroundColor: `rgb(${color.join(',')})`,
+                        boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
+                      }}
+                    />
+                    {hasPaid && (
+                      <button
+                        onClick={() => navigator.clipboard.writeText(hex)}
+                        style={{
+                          fontSize: '0.75rem',
+                          color: '#555',
+                          marginTop: '0.25rem',
+                          border: 'none',
+                          background: 'none',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        {hex} 📋
+                      </button>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
           </div>
 
           <div className="mt-4 text-center">
