@@ -125,36 +125,56 @@ export default function Home() {
               }}
             >
               {colors.map((color, i) => {
-                const hex = `#${color.map(c => c.toString(16).padStart(2, '0')).join('')}`
-                return (
-                  <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <div
-                      style={{
-                        width: '3.5rem',
-                        height: '3.5rem',
-                        borderRadius: '0.5rem',
-                        backgroundColor: `rgb(${color.join(',')})`,
-                        boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
-                      }}
-                    />
-                    {hasPaid && (
-                      <button
-                        onClick={() => navigator.clipboard.writeText(hex)}
-                        style={{
-                          fontSize: '0.75rem',
-                          color: '#555',
-                          marginTop: '0.25rem',
-                          border: 'none',
-                          background: 'none',
-                          cursor: 'pointer'
-                        }}
-                      >
-                        {hex} 📋
-                      </button>
-                    )}
-                  </div>
-                )
-              })}
+  const [r, g, b] = color
+  const hex = `#${color.map(c => c.toString(16).padStart(2, '0')).join('')}`
+  const rgbStr = `rgb(${r}, ${g}, ${b})`
+
+  // Convert RGB to CMYK (values between 0–100%)
+  const rPerc = r / 255
+  const gPerc = g / 255
+  const bPerc = b / 255
+
+  const k = 1 - Math.max(rPerc, gPerc, bPerc)
+  const c = k < 1 ? (1 - rPerc - k) / (1 - k) : 0
+  const m = k < 1 ? (1 - gPerc - k) / (1 - k) : 0
+  const y = k < 1 ? (1 - bPerc - k) / (1 - k) : 0
+
+  const cmykStr = `cmyk(${(c * 100).toFixed(0)}%, ${(m * 100).toFixed(0)}%, ${(y * 100).toFixed(0)}%, ${(k * 100).toFixed(0)}%)`
+
+  return (
+    <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <div
+        style={{
+          width: '3.5rem',
+          height: '3.5rem',
+          borderRadius: '0.5rem',
+          backgroundColor: `rgb(${r}, ${g}, ${b})`,
+          boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
+        }}
+      />
+      {hasPaid && (
+        <div style={{ fontSize: '0.75rem', marginTop: '0.5rem', textAlign: 'center' }}>
+          <button
+            onClick={() => navigator.clipboard.writeText(hex)}
+            style={{
+              border: 'none',
+              background: 'none',
+              cursor: 'pointer',
+              color: '#555',
+              display: 'block',
+              marginBottom: '2px'
+            }}
+          >
+            {hex} 📋
+          </button>
+          <div style={{ color: '#555', fontSize: '0.7rem' }}>{rgbStr}</div>
+          <div style={{ color: '#555', fontSize: '0.7rem' }}>{cmykStr}</div>
+        </div>
+      )}
+    </div>
+  )
+})}
+
             </div>
           </div>
 
