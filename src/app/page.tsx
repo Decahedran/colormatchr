@@ -25,12 +25,16 @@ export default function Home() {
       try {
         const colorThief = new ColorThief()
         const palette = colorThief.getPalette(img, 6)
+        console.log('🎨 Extracted palette:', palette)
         setColors(palette)
       } catch (err) {
-        console.error('Error extracting palette:', err)
+        console.error('❌ Error extracting palette:', err)
       }
+    } else {
+      console.warn('⏳ Image not ready yet')
     }
   }
+  
 
   const handleBuyPro = () => {
     window.open('https://derekmcauley.gumroad.com/l/ColorMatchrPro', '_blank')
@@ -73,6 +77,10 @@ export default function Home() {
             onLoad={extractColors}
             className="max-w-xs rounded shadow mb-4"
           />
+          
+          {colors.length === 0 && (
+            <p className="text-sm text-red-500">⚠️ No colors extracted yet</p>
+          )}
 
           <div id="palette-area" className="flex flex-wrap gap-3 justify-center mt-4">
             {colors.map((color, i) => (
@@ -84,28 +92,34 @@ export default function Home() {
             ))}
           </div>
 
-          {colors.length > 0 && (
-            <div className="mt-4 text-center">
-              {hasPaid ? (
-                <button
-                  onClick={handleDownload}
-                  className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-                >
-                  📥 Download Palette
-                </button>
-              ) : (
-                <>
-                  <div className="mb-2 text-gray-500">🔒 Download requires Pro</div>
-                  <button
-                    onClick={handleBuyPro}
-                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                  >
-                    Buy ColorMatchr Pro
-                  </button>
-                </>
-              )}
-            </div>
-          )}
+          <div className="mt-4 text-center">
+  <p className="text-sm text-gray-600 mb-2">
+    {colors.length === 0
+      ? '🎨 Upload an image to extract colors and unlock Pro features'
+      : hasPaid
+      ? '✅ Pro unlocked – download your palette!'
+      : '🔒 Download requires Pro'}
+  </p>
+
+  {colors.length > 0 ? (
+    hasPaid ? (
+      <button
+        onClick={handleDownload}
+        className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+      >
+        📥 Download Palette
+      </button>
+    ) : (
+      <button
+        onClick={handleBuyPro}
+        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+      >
+        Buy ColorMatchr Pro
+      </button>
+    )
+  ) : null}
+</div>
+
 
           <p className="text-sm mt-2 text-gray-600">Extracted Palette</p>
         </>
