@@ -3,23 +3,28 @@
 import ColorThief from 'colorthief'
 import html2canvas from 'html2canvas'
 import { useSearchParams } from 'next/navigation'
-import { useEffect, useRef, useState } from 'react'
+import { Suspense, useEffect, useRef, useState } from 'react'
 
 export default function Home() {
   const [imageUrl, setImageUrl] = useState<string | null>(null)
   const [colors, setColors] = useState<number[][]>([])
   const [hasPaid, setHasPaid] = useState(false)
   const imgRef = useRef<HTMLImageElement | null>(null)
-  const searchParams = useSearchParams()
 
-  useEffect(() => {
-    if (searchParams.get('unlocked') === 'true') {
-      setHasPaid(true)
-      localStorage.setItem('colormatchr-pro', 'true')
-    } else if (localStorage.getItem('colormatchr-pro') === 'true') {
-      setHasPaid(true)
-    }
-  }, [])
+  function ProUnlocker({ onUnlock }: { onUnlock: () => void }) {
+    const searchParams = useSearchParams()
+
+    useEffect(() => {
+      if (searchParams.get('unlocked') === 'true') {
+        onUnlock()
+        localStorage.setItem('colormatchr-pro', 'true')
+      } else if (localStorage.getItem('colormatchr-pro') === 'true') {
+        onUnlock()
+      }
+    }, [searchParams, onUnlock])
+
+    return null
+  }
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -63,6 +68,10 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-6">
+      <Suspense fallback={null}>
+        <ProUnlocker onUnlock={() => setHasPaid(true)} />
+      </Suspense>
+
       <h1 className="text-3xl font-bold mb-6">🎨 ColorMatchr</h1>
 
       <label className="cursor-pointer px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 mb-4">
