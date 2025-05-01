@@ -56,19 +56,16 @@ export default function Home() {
   }
 
   const handleDownload = async () => {
-    const palette = document.getElementById('palette-area')
-    if (!palette) {
+    const target = document.getElementById('capture-target')
+    if (!target) {
       alert('Could not find the palette to download.')
       return
     }
   
     try {
-      const canvas = await html2canvas(palette, {
+      const canvas = await html2canvas(target, {
         backgroundColor: '#ffffff',
-        useCORS: true,
-        ignoreElements: (el) =>
-          getComputedStyle(el).color.includes('oklch') ||
-          getComputedStyle(el).backgroundColor.includes('oklch')
+        useCORS: true
       })
   
       const link = document.createElement('a')
@@ -80,6 +77,7 @@ export default function Home() {
       alert('There was an error saving the image. Try again.')
     }
   }
+  
   
 
   return (
@@ -115,7 +113,8 @@ export default function Home() {
             <p className="text-sm text-red-500">⚠️ No colors extracted yet</p>
           )}
 
-          <div id="palette-area" className="flex flex-wrap gap-4 justify-center mt-4">
+<div className="mt-4 flex justify-center">
+  <div id="capture-target" className="flex flex-wrap gap-4 p-4 bg-white rounded shadow">
             {colors.map((color, i) => {
               const hex = `#${color.map(c => c.toString(16).padStart(2, '0')).join('')}`
               return (
@@ -135,6 +134,7 @@ export default function Home() {
                 </div>
               )
             })}
+          </div>
           </div>
 
           <div className="mt-4 text-center">
